@@ -3,6 +3,7 @@ package com.latchezar.javaspringassignment.controller;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +33,8 @@ public class WordRelationController {
     }
 
     @GetMapping
-    public List<WordRelationDTO> listAllWordRelationEntries() {
-        return wordRelationService.listAllWordRelationEntries();
+    public List<WordRelationDTO> listWordRelationEntries(@PathParam("filter") String filter) {
+        return wordRelationService.listWordRelationEntries(filter);
     }
 
 }

@@ -8,5 +8,5 @@ public interface WordRelationService {
 
     WordRelationDTO createWordRelation(WordRelationDTO wordRelationDTO);
 
-    List<WordRelationDTO> listAllWordRelationEntries();
+    List<WordRelationDTO> listWordRelationEntries(String filter);
 }

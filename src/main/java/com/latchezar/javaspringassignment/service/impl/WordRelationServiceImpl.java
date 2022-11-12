@@ -39,7 +39,11 @@ public class WordRelationServiceImpl implements WordRelationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<WordRelationDTO> listAllWordRelationEntries() {
+    public List<WordRelationDTO> listWordRelationEntries(String filter) {
+        if (filter != null && !filter.isEmpty()) {
+            return wordRelationRepository.findAllByRelation(filter).stream()
+                    .map(WordRelationDTO::new).collect(Collectors.toList());
+        }
         return wordRelationRepository.findAll().stream()
                 .map(WordRelationDTO::new).collect(Collectors.toList());
     }
