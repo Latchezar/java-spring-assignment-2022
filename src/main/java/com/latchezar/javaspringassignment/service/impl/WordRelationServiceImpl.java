@@ -24,15 +24,19 @@ public class WordRelationServiceImpl implements WordRelationService {
     @Override
     @Transactional
     public WordRelationDTO createWordRelation(WordRelationDTO wordRelationDTO) {
-        if (wordRelationRepository.existsByWordOneAndWordTwo(wordRelationDTO.getWordOne(), wordRelationDTO.getWordTwo())
-            || wordRelationRepository.existsByWordOneAndWordTwo(wordRelationDTO.getWordTwo(), wordRelationDTO.getWordOne())) {
+        String wordOne = wordRelationDTO.getWordOne().trim().toLowerCase();
+        String wordTwo = wordRelationDTO.getWordTwo().trim().toLowerCase();
+        String relation = wordRelationDTO.getRelation().trim().toLowerCase();
+
+        if (wordRelationRepository.existsByWordOneAndWordTwo(wordOne, wordTwo)
+            || wordRelationRepository.existsByWordOneAndWordTwo(wordTwo, wordOne)) {
             throw new ServiceException(ErrorCode.WORD_RELATION_ALREADY_EXISTS);
         }
 
         WordRelation wordRelation = new WordRelation();
-        wordRelation.setWordOne(wordRelationDTO.getWordOne().trim().toLowerCase());
-        wordRelation.setWordTwo(wordRelationDTO.getWordTwo().trim().toLowerCase());
-        wordRelation.setRelation(wordRelationDTO.getRelation().trim().toLowerCase());
+        wordRelation.setWordOne(wordOne);
+        wordRelation.setWordTwo(wordTwo);
+        wordRelation.setRelation(relation);
 
         return new WordRelationDTO(wordRelationRepository.save(wordRelation));
     }
