@@ -1,5 +1,6 @@
 package com.latchezar.javaspringassignment.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class WordRelationServiceImpl implements WordRelationService {
         String relation = wordRelationDTO.getRelation().trim().toLowerCase();
 
         if (wordRelationRepository.existsByWordOneAndWordTwo(wordOne, wordTwo)
-            || wordRelationRepository.existsByWordOneAndWordTwo(wordTwo, wordOne)) {
+                || wordRelationRepository.existsByWordOneAndWordTwo(wordTwo, wordOne)) {
             throw new ServiceException(ErrorCode.WORD_RELATION_ALREADY_EXISTS);
         }
 
@@ -55,6 +56,66 @@ public class WordRelationServiceImpl implements WordRelationService {
         }
 
         return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getRelationPath(String source, String target) {
+        String lowerCaseSource = source.trim().toLowerCase();
+        String lowerCaseTarget = target.trim().toLowerCase();
+
+        List<WordRelation> sources = wordRelationRepository.findAllByWordOneOrWordTwo(lowerCaseSource, lowerCaseSource);
+
+        for (WordRelation wordRelation : sources) {
+            String current = wordRelation.getWordOne().equals(lowerCaseSource) ? wordRelation.getWordOne() :
+                    wordRelation.getWordTwo();
+            String next = wordRelation.getWordOne().equals(lowerCaseSource) ? wordRelation.getWordTwo() :
+                    wordRelation.getWordOne();
+
+            StringBuilder path = new StringBuilder(current)
+                    .append(" ==(")
+                    .append(wordRelation.getRelation())
+                    .append(")=> ")
+                    .append(next);
+
+            path.append(findPathToTarget(lowerCaseTarget, next, List.of(wordRelation.getId())));
+
+            if (isTargetFound(lowerCaseTarget, path.toString())) {
+                return path.toString();
+            }
+        }
+
+        throw new ServiceException(ErrorCode.NO_PATH_AVAILABLE);
+    }
+
+    private String findPathToTarget(String lowerCaseTarget, String current, List<Long> forbiddenIds) {
+        List<WordRelation> relations = wordRelationRepository.findAllByIdNotInAndWordOne(forbiddenIds, current);
+        relations.addAll(wordRelationRepository.findAllByIdNotInAndWordTwo(forbiddenIds, current));
+
+        for (WordRelation relation : relations) {
+            String next = relation.getWordOne().equals(current) ? relation.getWordTwo() : relation.getWordOne();
+            StringBuilder path = new StringBuilder();
+            path.append(" ==(")
+                .append(relation.getRelation())
+                .append(")=> ")
+                .append(next);
+            if (next.equals(lowerCaseTarget)) {
+                return path.toString();
+            }
+            List<Long> ids = new ArrayList<>(forbiddenIds);
+            ids.add(relation.getId());
+            path.append(findPathToTarget(lowerCaseTarget, next, ids));
+
+            if (isTargetFound(lowerCaseTarget, path.toString())) {
+                return path.toString();
+            }
+        }
+        return "";
+    }
+
+    private boolean isTargetFound(String lowerCaseTarget, String path) {
+        String[] parts = path.split(" ");
+        return parts[parts.length - 1].equals(lowerCaseTarget);
     }
 
     private WordRelationDTO createInverseWordRelationDTO(WordRelation wordRelation) {

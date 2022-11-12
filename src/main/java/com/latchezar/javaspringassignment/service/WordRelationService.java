@@ -9,4 +9,6 @@ public interface WordRelationService {
     WordRelationDTO createWordRelation(WordRelationDTO wordRelationDTO);
 
     List<WordRelationDTO> listWordRelationEntries(String filter, boolean inverse);
+
+    String getRelationPath(String source, String target);
 }

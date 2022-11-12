@@ -13,4 +13,11 @@ public interface WordRelationRepository extends JpaRepository<WordRelation, Long
     boolean existsByWordOneAndWordTwo(String wordOne, String wordTwo);
 
     List<WordRelation> findAllByRelation(String filter);
+
+    List<WordRelation> findAllByWordOneOrWordTwo(String wordOne, String wordTwo);
+
+    List<WordRelation> findAllByIdNotInAndWordOne(List<Long> ids, String word);
+
+    List<WordRelation> findAllByIdNotInAndWordTwo(List<Long> ids, String word);
+
 }

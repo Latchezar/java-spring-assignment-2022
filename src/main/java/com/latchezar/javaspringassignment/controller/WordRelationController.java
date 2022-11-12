@@ -37,4 +37,9 @@ public class WordRelationController {
         return wordRelationService.listWordRelationEntries(filter, inverse);
     }
 
+    @GetMapping("/path")
+    public String getRelationPath(@PathParam("source") String source, @PathParam("target") String target) {
+        return wordRelationService.getRelationPath(source, target);
+    }
+
 }
