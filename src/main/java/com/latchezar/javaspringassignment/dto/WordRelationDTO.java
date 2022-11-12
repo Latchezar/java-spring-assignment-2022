@@ -2,6 +2,7 @@ package com.latchezar.javaspringassignment.dto;
 
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.latchezar.javaspringassignment.model.WordRelation;
@@ -19,12 +20,15 @@ public class WordRelationDTO {
     private Long id;
 
     @NotBlank(message = "Words must not be empty!")
+    @Pattern(regexp = "[a-zA-Z\\s]+", message = "Only alphabetical characters and spaces are allowed")
     private String wordOne;
 
     @NotBlank(message = "Words must not be empty!")
+    @Pattern(regexp = "[a-zA-Z\\s]+", message = "Only alphabetical characters and spaces are allowed")
     private String wordTwo;
 
     @NotBlank(message = "Relation must not be empty!")
+    @Pattern(regexp = "[a-zA-Z\\s]+", message = "Only alphabetical characters and spaces are allowed")
     private String relation;
 
     private Boolean inverse;
