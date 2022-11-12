@@ -24,8 +24,8 @@ public class WordRelationServiceImpl implements WordRelationService {
     @Override
     @Transactional
     public WordRelationDTO createWordRelation(WordRelationDTO wordRelationDTO) {
-        if (wordRelationRepository.existsByWordOneAndWordTwo(wordRelationDTO.getWordOne(),
-                wordRelationDTO.getWordTwo())) {
+        if (wordRelationRepository.existsByWordOneAndWordTwo(wordRelationDTO.getWordOne(), wordRelationDTO.getWordTwo())
+            || wordRelationRepository.existsByWordOneAndWordTwo(wordRelationDTO.getWordTwo(), wordRelationDTO.getWordOne())) {
             throw new ServiceException(ErrorCode.WORD_RELATION_ALREADY_EXISTS);
         }
 
@@ -40,17 +40,14 @@ public class WordRelationServiceImpl implements WordRelationService {
     @Override
     @Transactional(readOnly = true)
     public List<WordRelationDTO> listWordRelationEntries(String filter, boolean inverse) {
-        List<WordRelation> wordRelations = filter != null && !filter.isEmpty()
-                ? wordRelationRepository.findAllByRelation(filter)
-                : wordRelationRepository.findAll();
+        List<WordRelation> wordRelations = filter != null && !filter.isEmpty() ?
+                wordRelationRepository.findAllByRelation(filter) :
+                wordRelationRepository.findAll();
 
-        List<WordRelationDTO> result = wordRelations.stream()
-                .map(WordRelationDTO::new).collect(Collectors.toList());
+        List<WordRelationDTO> result = wordRelations.stream().map(WordRelationDTO::new).collect(Collectors.toList());
 
         if (inverse) {
-            result.addAll(wordRelations.stream()
-                    .map(this::createInverseWordRelationDTO)
-                    .collect(Collectors.toList()));
+            result.addAll(wordRelations.stream().map(this::createInverseWordRelationDTO).collect(Collectors.toList()));
         }
 
         return result;
