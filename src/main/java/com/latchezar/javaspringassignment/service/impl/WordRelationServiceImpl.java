@@ -1,5 +1,8 @@
 package com.latchezar.javaspringassignment.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +24,8 @@ public class WordRelationServiceImpl implements WordRelationService {
     @Override
     @Transactional
     public WordRelationDTO createWordRelation(WordRelationDTO wordRelationDTO) {
-        if (wordRelationRepository.existsByWordOneAndWordTwo(wordRelationDTO.getWordOne(), wordRelationDTO.getWordTwo())) {
+        if (wordRelationRepository.existsByWordOneAndWordTwo(wordRelationDTO.getWordOne(),
+                wordRelationDTO.getWordTwo())) {
             throw new ServiceException(ErrorCode.WORD_RELATION_ALREADY_EXISTS);
         }
 
@@ -31,5 +35,12 @@ public class WordRelationServiceImpl implements WordRelationService {
         wordRelation.setRelation(wordRelationDTO.getRelation());
 
         return new WordRelationDTO(wordRelationRepository.save(wordRelation));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<WordRelationDTO> listAllWordRelationEntries() {
+        return wordRelationRepository.findAll().stream()
+                .map(WordRelationDTO::new).collect(Collectors.toList());
     }
 }
