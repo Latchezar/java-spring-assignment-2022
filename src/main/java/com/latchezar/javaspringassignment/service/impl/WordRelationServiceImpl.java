@@ -30,9 +30,9 @@ public class WordRelationServiceImpl implements WordRelationService {
         }
 
         WordRelation wordRelation = new WordRelation();
-        wordRelation.setWordOne(wordRelationDTO.getWordOne());
-        wordRelation.setWordTwo(wordRelationDTO.getWordTwo());
-        wordRelation.setRelation(wordRelationDTO.getRelation());
+        wordRelation.setWordOne(wordRelationDTO.getWordOne().trim().toLowerCase());
+        wordRelation.setWordTwo(wordRelationDTO.getWordTwo().trim().toLowerCase());
+        wordRelation.setRelation(wordRelationDTO.getRelation().trim().toLowerCase());
 
         return new WordRelationDTO(wordRelationRepository.save(wordRelation));
     }
