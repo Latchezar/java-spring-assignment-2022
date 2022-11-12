@@ -39,12 +39,29 @@ public class WordRelationServiceImpl implements WordRelationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<WordRelationDTO> listWordRelationEntries(String filter) {
-        if (filter != null && !filter.isEmpty()) {
-            return wordRelationRepository.findAllByRelation(filter).stream()
-                    .map(WordRelationDTO::new).collect(Collectors.toList());
-        }
-        return wordRelationRepository.findAll().stream()
+    public List<WordRelationDTO> listWordRelationEntries(String filter, boolean inverse) {
+        List<WordRelation> wordRelations = filter != null && !filter.isEmpty()
+                ? wordRelationRepository.findAllByRelation(filter)
+                : wordRelationRepository.findAll();
+
+        List<WordRelationDTO> result = wordRelations.stream()
                 .map(WordRelationDTO::new).collect(Collectors.toList());
+
+        if (inverse) {
+            result.addAll(wordRelations.stream()
+                    .map(this::createInverseWordRelationDTO)
+                    .collect(Collectors.toList()));
+        }
+
+        return result;
+    }
+
+    private WordRelationDTO createInverseWordRelationDTO(WordRelation wordRelation) {
+        WordRelationDTO wordRelationDTO = new WordRelationDTO(wordRelation);
+        wordRelationDTO.setInverse(true);
+        wordRelationDTO.setWordOne(wordRelation.getWordTwo());
+        wordRelationDTO.setWordTwo(wordRelation.getWordOne());
+
+        return wordRelationDTO;
     }
 }

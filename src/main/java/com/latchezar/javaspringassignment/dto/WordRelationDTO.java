@@ -27,11 +27,14 @@ public class WordRelationDTO {
     @NotBlank(message = "Relation must not be empty!")
     private String relation;
 
+    private Boolean inverse;
+
     public WordRelationDTO(WordRelation wordRelation) {
         setId(wordRelation.getId());
         setWordOne(wordRelation.getWordOne());
         setWordTwo(wordRelation.getWordTwo());
         setRelation(wordRelation.getRelation());
+        setInverse(Boolean.FALSE);
     }
 
 }

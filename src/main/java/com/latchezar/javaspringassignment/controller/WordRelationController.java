@@ -33,8 +33,8 @@ public class WordRelationController {
     }
 
     @GetMapping
-    public List<WordRelationDTO> listWordRelationEntries(@PathParam("filter") String filter) {
-        return wordRelationService.listWordRelationEntries(filter);
+    public List<WordRelationDTO> listWordRelationEntries(@PathParam("filter") String filter, @PathParam("inverse") boolean inverse) {
+        return wordRelationService.listWordRelationEntries(filter, inverse);
     }
 
 }
